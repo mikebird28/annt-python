@@ -165,6 +165,13 @@ def load(dir_path):
 
 
 def load_meta(filepath):
+    """ Load metafile
+    Args:
+        filepath(str): Metafile filepath
+    Returns:
+        (list, list): Pair of tag name list and color index list
+
+    """
     with open(filepath) as fp:
         obj = json.load(fp)
 
@@ -182,6 +189,12 @@ def load_meta(filepath):
         
 
 def load_image(filepath):
+    """ Load image from filepath
+    Args:
+        filepath(str): Image filepath
+    Returns:
+        np.ndarray
+    """
     img = cv2.imread(filepath, cv2.IMREAD_IGNORE_ORIENTATION | cv2.IMREAD_COLOR)
     return img
 
