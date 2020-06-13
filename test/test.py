@@ -1,6 +1,6 @@
 
 from unittest import TestCase
-from annt import load, load_annotation, show, Box
+from annt import load, load_annotation, show, Box, hsv_to_rgb
 
 class TestAnnt(TestCase):
 
@@ -25,5 +25,17 @@ class TestAnnt(TestCase):
     def test_load(self):
         path = "/Users/keisuke/Dropbox/アプリ/annt/test name/"
         annotations = load(path)
-        for ant in annotations:
-            ant.show()
+
+class TestColor(TestCase):
+
+    def test_hsv_to_rgb(self):
+        colors = [
+            ((255, 0, 0), (0, 1, 1)),
+            ((255, 255, 255), (0, 0, 1)),
+            ((85, 89, 153), (237, 0.44, 0.60)),
+        ]
+        for rgb, hsv in colors:
+            self.assertTupleEqual(rgb, hsv_to_rgb(*hsv))
+
+if __name__ == "__main__":
+    unittest.main()
