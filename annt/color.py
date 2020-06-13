@@ -1,5 +1,32 @@
 
 
+def idx_to_hue(idx, color_num=24):
+    """ Convert color index to hue
+    """
+
+    if not isinstance(idx, int) or idx < 0 or idx > color_num-1:
+        raise ValueError('idx should be integer between 0 and color_num-1')
+
+    used = [-1] * color_num
+    used[0] = color_num - 1
+    i = 0
+
+    result = 0
+    while i < idx:
+        maxi = 0
+        maxv = used[0]
+        for j in range(color_num):
+            if used[j] > maxv:
+                maxi = j
+                maxv = used[j]
+        nexti = maxi + maxv // 2 + 1
+        nextv = maxi + maxv - nexti
+        used[maxi] = nexti - maxi - 1
+        used[nexti] = nextv
+        result = nexti
+        i += 1
+    h = result / color_num * 360
+    return h
 
 def hsv_to_rgb(h, s, v):
     """ Convert hsv color code to rgb color code.

@@ -140,9 +140,14 @@ def load(dir_path):
         raise IOError('image dir or annotation dir not exists')
 
     name_ls, cidx_ls = load_meta(metapath)
-    color_ls = [color.hsv_to_rgb(h*24, 1, 0.8) for h in cidx_ls]
     name_set = set(name_ls)
-    color_map = {k: v for k, v in zip(name_ls, color_ls)}
+    color_map = {}
+    for n, ci in zip(name_ls, cidx_ls):
+        h = color.idx_to_hue(ci)
+        c = color.hsv_to_rgb(h, 1, 0.7)
+        # Revser tuple to convert (r, g, b) to (b, g, r)
+        c = tuple(reversed(c))
+        color_map[n] = c
     del(name_ls)
     del(cidx_ls)
 

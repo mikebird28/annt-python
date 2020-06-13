@@ -23,7 +23,7 @@ class TestAnnt(TestCase):
         self.assertEqual(new_box.right, 10)
 
     def test_load(self):
-        path = "/Users/keisuke/Dropbox/アプリ/annt/test name/"
+        path = "/Users/keisuke/Dropbox/アプリ/annt/test/"
         annotations = load(path)
         for a in annotations:
             a.show()
