@@ -1,6 +1,6 @@
 
 from unittest import TestCase
-from annt import load, load_annotation, show, Box, hsv_to_rgb
+from annt import load, load_annotation, Box, hsv_to_rgb
 
 class TestAnnt(TestCase):
 
@@ -25,6 +25,8 @@ class TestAnnt(TestCase):
     def test_load(self):
         path = "/Users/keisuke/Dropbox/アプリ/annt/test name/"
         annotations = load(path)
+        for a in annotations:
+            a.show()
 
 class TestColor(TestCase):
 
