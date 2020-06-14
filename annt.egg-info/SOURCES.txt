@@ -1,0 +1,8 @@
+README.md
+setup.cfg
+setup.py
+annt.egg-info/PKG-INFO
+annt.egg-info/SOURCES.txt
+annt.egg-info/dependency_links.txt
+annt.egg-info/top_level.txt
+test/test.py
