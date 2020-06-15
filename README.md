@@ -2,7 +2,7 @@ annt
 ====
 Simple annotated file loader for object detection task.
 
-## Descriptkon
+## Description
 Various tools have been developed so far for object detection tasks.
 However, there are no standard in annotation tools and formats and
 developers still write their own json or xml parser of annotation files.
