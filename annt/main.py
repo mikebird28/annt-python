@@ -1,4 +1,10 @@
 
+""" Core module of annt-python
+
+This module provides functions related Boudning Box and Annotation information,
+which are important for handling annotation information.
+"""
+
 import os
 import json
 import cv2
@@ -14,7 +20,63 @@ NAME_ANNOTATION_DIR = 'annotations'
 NAME_METAFILE = 'taginfo.json'
 
 
+def load(dir_path):
+    """ load annotation files.
+
+    Args:
+        dir_path (str): Annotation directory path.
+
+    Yields:
+        Annotation: Loaded Annotation object.
+    """
+    if not os.path.isdir(dir_path):
+        raise IOError(f'{dir_path} not exists')
+
+    image_dir = os.path.join(dir_path, NAME_IMAGES_DIR)
+    annt_dir = os.path.join(dir_path, NAME_ANNOTATION_DIR)
+    metapath = os.path.join(dir_path, NAME_METAFILE)
+    
+    if not os.path.isdir(image_dir) or not os.path.isdir(annt_dir):
+        raise IOError('image dir or annotation dir not exists')
+
+    name_ls, cidx_ls = _load_meta(metapath)
+    name_set = set(name_ls)
+    color_map = {}
+    for n, ci in zip(name_ls, cidx_ls):
+        h = color.idx_to_hue(ci)
+        c = color.hsv_to_rgb(h, 1, 0.7)
+        # Revser tuple to convert (r, g, b) to (b, g, r)
+        c = tuple(reversed(c))
+        color_map[n] = c
+    del(name_ls)
+    del(cidx_ls)
+
+    image_files = os.listdir(image_dir)
+    annotation_files = set(os.listdir(annt_dir))
+
+    for f in image_files:
+        annt_file = f.split(".")[0] + ".json"
+        if annt_file not in annotation_files:
+            continue
+        img = _load_image(os.path.join(image_dir, f))
+        img_height, img_width, _ = img.shape
+        ant = _load_annotation(os.path.join(annt_dir, annt_file), img_width, img_height, name_set)
+        ant.color_map.update(color_map)
+        ant.filename = f
+        ant.image = img
+        yield ant
+
+
 class Annotation():
+
+    """
+    Image and annotation information holder.
+
+    Attributes:
+        filename (str): filename.
+        image (np.ndarray): Image array in opencv2 format.
+        boxes (list): List of box.
+    """
 
     def __init__(self, filename, image, boxes=[]):
         self.filename = filename
@@ -26,6 +88,11 @@ class Annotation():
         return self.filename
 
     def show(self, max_width=500, max_height=500):
+        """ Display image with annotation information.
+
+        Notes:
+            Press any key to close image window.
+        """
         width, height, _ = self.image.shape
         if width/height > max_width/max_height:
             rate = max_width/width
@@ -73,6 +140,21 @@ class Annotation():
 
 
 class Box():
+
+    """
+    Bounding box representation.
+
+    Attributes:
+        tag (str): tag of the box.
+        x (float): Upper-Left x coordination of the bounding box.
+        y (float): Upper-Left y coordination of the bounding box.
+        w (float): Width of the bounding box.
+        h (float): Height of the bounding box.
+        top (float): Distance from top.
+        bottom (float): Distance from bottom.
+        left (float): Distance from left.
+        right (float): Distance from right.
+    """
 
     def __init__(self, tag, iwidth, iheight, x, y, w, h):
         self.tag = tag
@@ -126,53 +208,12 @@ class Box():
         self.w = prev_right - self.x
 
 
-def load(dir_path):
-    """ load annotation files.
-    """
-    if not os.path.isdir(dir_path):
-        raise IOError(f'{dir_path} not exists')
-
-    image_dir = os.path.join(dir_path, NAME_IMAGES_DIR)
-    annt_dir = os.path.join(dir_path, NAME_ANNOTATION_DIR)
-    metapath = os.path.join(dir_path, NAME_METAFILE)
-    
-    if not os.path.isdir(image_dir) or not os.path.isdir(annt_dir):
-        raise IOError('image dir or annotation dir not exists')
-
-    name_ls, cidx_ls = load_meta(metapath)
-    name_set = set(name_ls)
-    color_map = {}
-    for n, ci in zip(name_ls, cidx_ls):
-        h = color.idx_to_hue(ci)
-        c = color.hsv_to_rgb(h, 1, 0.7)
-        # Revser tuple to convert (r, g, b) to (b, g, r)
-        c = tuple(reversed(c))
-        color_map[n] = c
-    del(name_ls)
-    del(cidx_ls)
-
-    image_files = os.listdir(image_dir)
-    annotation_files = set(os.listdir(annt_dir))
-
-    annotations = []
-    for f in image_files:
-        annt_file = f.split(".")[0] + ".json"
-        if annt_file not in annotation_files:
-            continue
-        img = load_image(os.path.join(image_dir, f))
-        img_height, img_width, _ = img.shape
-        ant = load_annotation(os.path.join(annt_dir, annt_file), img_width, img_height, name_set)
-        ant.color_map.update(color_map)
-        ant.filename = f
-        ant.image = img
-        annotations.append(ant)
-    return annotations
-
-
-def load_meta(filepath):
+def _load_meta(filepath):
     """ Load metafile
+
     Args:
         filepath(str): Metafile filepath
+
     Returns:
         (list, list): Pair of tag name list and color index list
 
@@ -193,10 +234,12 @@ def load_meta(filepath):
     return name_ls, cidx_ls
         
 
-def load_image(filepath):
+def _load_image(filepath):
     """ Load image from filepath
+
     Args:
         filepath(str): Image filepath
+
     Returns:
         np.ndarray
     """
@@ -204,13 +247,15 @@ def load_image(filepath):
     return img
 
 
-def load_annotation(filepath, img_width, img_height, available_tags=None):
+def _load_annotation(filepath, img_width, img_height, available_tags=None):
     """ Load annotation information from filepath
+
     Args:
         filepath(str): annotation filepath.
         img_width(int): Image width
         img_height(int): Image height
         available_tags(set, optional): This function read only the tags specified here.
+
     Returns:
         Annotation
     """
