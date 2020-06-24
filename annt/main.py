@@ -8,6 +8,7 @@ which are important for handling annotation information.
 import os
 import json
 import cv2
+import numpy as np
 from . import color
 from . import utils
 
@@ -113,6 +114,7 @@ class Annotation():
             cv2.rectangle(resized, (x1, y1), (x2, y2), c)
 
             tag_text = box.tag
+            print(tag_text)
             # If tag_text is ascii string, display text
             if len(tag_text) != len(tag_text.encode()):
                 continue
@@ -137,6 +139,58 @@ class Annotation():
 
         cv2.imshow(self.filename, resized)
         cv2.waitKey()
+
+    def rotate(self, angle):
+        """ Rotate image at the specified angle.
+        Create copy of itself and rotate.
+        This method is non-destructive.
+
+        Args:
+            angle(int): Rotate angle (degree).
+
+        Returns:
+            Annotate: Rotated annotate object.
+
+        """
+        img = self.image.copy()
+        h, w = img.shape[:2]
+
+        r = np.radians(angle)
+        s = np.abs(np.sin(r))
+        c = np.abs(np.cos(r))
+
+        # Compute image size after rotation.
+        nw = int(c*w + s*h)
+        nh = int(s*w + c*h)
+
+        # Compute affine matrix and apply to image.
+        center = (w/2, h/2)
+        rot_m = cv2.getRotationMatrix2D(center, angle, 1.0)
+        rot_m[0][2] = rot_m[0][2] + (nw - w) // 2
+        rot_m[1][2] = rot_m[1][2] + (nh - h) // 2
+        img = cv2.warpAffine(img, rot_m, (nw, nh), flags=cv2.INTER_CUBIC)
+
+        new_boxes = []
+        for box in self.boxes:
+            coord_arr = np.array([
+                [box.x, box.y, 1],  # Left-Top
+                [box.x, box.y+box.h, 1],  # Left-Bottom
+                [box.x+box.w, box.y, 1],  # Right-Top
+                [box.x+box.w, box.y+box.h, 1],  # Right-Botto
+            ])
+            new_coord = rot_m.dot(coord_arr.T)
+            x_ls = new_coord[0]
+            y_ls = new_coord[1]
+            x = int(min(x_ls))
+            y = int(min(y_ls))
+            w = int(max(x_ls) - x)
+            h = int(max(y_ls) - y)
+            new_box = Box(box.tag, nw, nh, x, y, w, h)
+            new_boxes.append(new_box)
+
+        new_ant = Annotation(self.filename, img, new_boxes)
+        new_ant.color_map = self.color_map
+        return new_ant
 
 
 class Box():
