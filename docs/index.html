@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>annt-python documentation! &mdash; annt-python  documentation</title>
+  <title>annt &mdash; annt-python  documentation</title>
   
 
   
@@ -82,8 +82,17 @@
             
               <!-- Local TOC -->
               <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">annt-python documentation!</a></li>
+<li><a class="reference internal" href="#">annt</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#example-1-load-annotated-images">Example 1. Load annotated images</a></li>
+<li><a class="reference internal" href="#example-2-data-augumentation">Example 2. Data augumentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-annt.main">Documents</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
 </ul>
 </div>
             
@@ -130,7 +139,7 @@
     
       <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
-      <li>annt-python documentation!</li>
+      <li>annt</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -149,11 +158,95 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="annt-python-documentation">
-<h1>annt-python documentation!<a class="headerlink" href="#annt-python-documentation" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
+  <div class="section" id="annt">
+<h1>annt<a class="headerlink" href="#annt" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>Various tools have been developed so far for object detection tasks.
+However, there are no standard in annotation tools and formats and
+developers still write their own json or xml parser of annotation files.
+<a class="reference external" href="https://annt.ai/">annt</a> is an annotation tool that operates in the form of cloud services such as dropbox.
+annt provides not only simple and comfortable annotation exprience, but also powerful library for loading annotated images.</p>
+<p>This is a documentation for <a class="reference external" href="https://github.com/mikebird28/annt-python">python library</a>  which read images annotated with annt.
+you can load annotated images in a simple way and focus on the essential AI development.
+Also, this library has a basic build-in preprocessing functions. So you can save time to write extra code.</p>
 </div>
-<span class="target" id="module-annt.main"></span><p>Core module of annt-python</p>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="example-1-load-annotated-images">
+<h3>Example 1. Load annotated images<a class="headerlink" href="#example-1-load-annotated-images" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">annt</span>
+
+<span class="c1"># annotations is list of annotation data</span>
+<span class="n">annotations</span> <span class="o">=</span> <span class="n">annt</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;~/Dropbox/app/project_name&#39;</span><span class="p">)</span>
+
+<span class="c1"># Display ths information of each annotation file.</span>
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">image</span>  <span class="c1"># opencv2 image array</span>
+<span class="n">boxes</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">boxes</span>  <span class="c1"># list of bounding boxes</span>
+
+<span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">colors</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># you can</span>
+
+<span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">boxes</span><span class="p">:</span>
+   <span class="c1"># Tag information (str)</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;~ tag name : box.tag ~&#39;</span><span class="p">)</span>
+
+   <span class="c1"># You can get coordination information of the box by two methods,</span>
+   <span class="c1"># Left Top Style and Edge Style.</span>
+   <span class="c1"># Coordination information based on left top of the box. (Left-Top Style)</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;x : </span><span class="si">{box.x}</span><span class="s1">&#39;</span><span class="p">)</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;y : </span><span class="si">{box.y}</span><span class="s1">&#39;</span><span class="p">)</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;w : </span><span class="si">{box.w}</span><span class="s1">&#39;</span><span class="p">)</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;h : </span><span class="si">{box.h}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+   <span class="c1"># Coordination information based on the distance from each edge of the image. (Edge Style)</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;left : </span><span class="si">{box.left}</span><span class="s1">&#39;</span><span class="p">)</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;right : </span><span class="si">{box.right}</span><span class="s1">&#39;</span><span class="p">)</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;top : </span><span class="si">{box.top}</span><span class="s1">&#39;</span><span class="p">)</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;bottom : </span><span class="si">{box.bottom}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+   <span class="c1"># If you change these coordination properties, all of them will recomputed.</span>
+   <span class="n">box</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="mi">300</span>  <span class="c1"># This operation will also change box.right property.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-2-data-augumentation">
+<h3>Example 2. Data augumentation<a class="headerlink" href="#example-2-data-augumentation" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">annt</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="c1"># annotations is list of annotation data</span>
+<span class="n">annotations</span> <span class="o">=</span> <span class="n">annt</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;./Dropbox/App/annt/test&#39;</span><span class="p">)</span>
+<span class="n">sample_n</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># Number of samples from one image</span>
+
+<span class="c1"># Display ths information of each annotation file.</span>
+<span class="n">augumented</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">raw_a</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sample_n</span><span class="p">):</span>
+
+      <span class="c1"># Rotate image</span>
+      <span class="n">rot_deg</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">270</span><span class="p">,</span> <span class="mi">360</span><span class="p">])</span>
+      <span class="n">a</span> <span class="o">=</span> <span class="n">raw_a</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">rot_deg</span><span class="p">)</span>
+
+      <span class="c1"># Tilt image</span>
+      <span class="n">tilt_deg</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+      <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">tilt_deg</span><span class="p">)</span>
+
+      <span class="c1"># Flip image</span>
+      <span class="n">flip_x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="n">flip_y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">flip_x</span><span class="p">,</span> <span class="n">flip_y</span><span class="p">)</span>
+      <span class="n">augumented</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+<span class="c1"># Show first augumented image.</span>
+<span class="n">augumented</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="module-annt.main">
+<span id="documents"></span><h2>Documents<a class="headerlink" href="#module-annt.main" title="Permalink to this headline">¶</a></h2>
+<p>Core module of annt-python</p>
 <p>This module provides functions related Boudning Box and Annotation information,
 which are important for handling annotation information.</p>
 <dl class="py class">
@@ -326,12 +419,13 @@ This method is non-destructive.</p>
 
 </div>
 <div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
+</div>
 </div>
 
 
