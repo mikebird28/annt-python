@@ -29,11 +29,12 @@ class TestAnnt(TestCase):
             a.show()
             break
 
-    def test_rotate(self):
+    def test_preprocess(self):
         path = "/Users/keisuke/Dropbox/アプリ/annt/test/"
         annotations = load(path)
         for a in annotations:
-            a = a.rotate(90)
+            a = a.rotate(5)
+            a = a.resize(500, 500)
             a.show()
             break
 

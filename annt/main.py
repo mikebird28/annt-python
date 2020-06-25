@@ -114,7 +114,6 @@ class Annotation():
             cv2.rectangle(resized, (x1, y1), (x2, y2), c)
 
             tag_text = box.tag
-            print(tag_text)
             # If tag_text is ascii string, display text
             if len(tag_text) != len(tag_text.encode()):
                 continue
@@ -139,6 +138,35 @@ class Annotation():
 
         cv2.imshow(self.filename, resized)
         cv2.waitKey()
+
+    def resize(self, width, height):
+        """ Resize image to the spcified size.
+        This method is non-destructive.
+
+        Args:
+            width(int): width
+            height(int): height
+        Returns:
+            Annotate: Resized annotate object.
+        """
+        c_height, c_width = self.image.shape[:2]
+        img = cv2.resize(self.image, (width, height))
+
+        r_width = width / c_width
+        r_height = width / c_height
+
+        # Resize boxes.
+        new_boxes = []
+        for box in self.boxes:
+            x = int(box.x * r_width)
+            y = int(box.y * r_height)
+            w = int(box.w * r_width)
+            h = int(box.h * r_height)
+            new_box = Box(box.tag, width, height, x, y, w, h)
+            new_boxes.append(new_box)
+        new_ant = Annotation(self.filename, img, new_boxes)
+        new_ant.color_map = self.color_map
+        return new_ant
 
     def rotate(self, angle):
         """ Rotate image at the specified angle.
