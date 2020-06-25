@@ -1,7 +1,7 @@
 
-=====
+============
 annt 
-=====
+============
 
 
 Description
@@ -20,14 +20,14 @@ Examples
 ============
 
 Example 1. Load annotated images
-::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::
 
 .. code-block::
 
    import annt
 
    # annotations is list of annotation data
-   annotations = annt.load('~/Dropbox/app/project_name')
+   annotations = annt.load('./Dropbox/app/project_name')
 
    # Display ths information of each annotation file.
    for a in annotations:
