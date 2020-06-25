@@ -220,6 +220,39 @@ class Annotation():
         new_ant.color_map = self.color_map
         return new_ant
 
+    def flip(self, flip_x=True, flip_y=False):
+        """ Flip image.
+        Thie method flip image by the axis given by argument.
+        This method is non-destructive.
+
+        Args:
+            flip_x (bool, optional): Whether flip with x axis. Default True.
+            flip_y (bool, optional): Whether flip with y axis. Default True.
+        Returns:
+            Annotate: Rotated annotate object.
+        """
+        ih, iw = self.image.shape[:2]
+        img = self.image.copy()
+        if flip_x:
+            img = np.fliplr(img)
+        if flip_y:
+            img = np.flipud(img)
+
+        # Flip boxes
+        new_boxes = []
+        for box in self.boxes:
+            x = box.left
+            y = box.top
+            if flip_x:
+                x = box.right
+            if flip_y:
+                y = box.bottom
+            new_box = Box(box.tag, iw, ih, x, y, box.w, box.h)
+            new_boxes.append(new_box)
+        new_ant = Annotation(self.filename, img, new_boxes)
+        new_ant.color_map = self.color_map
+        return new_ant
+
 
 class Box():
 

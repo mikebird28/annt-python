@@ -35,8 +35,8 @@ class TestAnnt(TestCase):
         for a in annotations:
             a = a.rotate(5)
             a = a.resize(500, 500)
+            a = a.flip(True, True)
             a.show()
-            break
 
 class TestColor(TestCase):
 
